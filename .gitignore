@@ -1,0 +1,15 @@
+# 环境变量（含 Key，绝不进库）
+.env
+
+# Python 虚拟环境
+.venv/
+venv/
+
+# 缓存
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# 数据产物（docs/ 可由 make_docs.py 重新生成，chroma_db/ 可重建，均不入库）
+docs/
+chroma_db/

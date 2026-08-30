@@ -1,0 +1,4 @@
+# Week 5 卫星项目「语义检索小程序」依赖
+chromadb          # 向量库（轻量，嵌入 Python，本周首选）
+openai            # embedding 调用（OpenAI 兼容端点：百炼 / 硅基流动）
+python-dotenv     # 读 .env
