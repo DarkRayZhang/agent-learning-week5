@@ -39,7 +39,10 @@ def chunk_docs():
 
 def build_index():
     chroma = chromadb.PersistentClient(path=PERSIST_DIR)
-    col = chroma.get_or_create_collection(COLLECTION)
+    # ⚠️ 必须显式声明 cosine：Chroma 默认是 l2（实测 col.configuration =
+    #    {'hnsw': {'space': 'l2', ...}}），与本周「用余弦」的结论矛盾。
+    #    space 在 collection 创建时就绑死（属 collection 元数据），事后改不了。
+    col = chroma.get_or_create_collection(COLLECTION, metadata={"hnsw:space": "cosine"})
     if col.count() > 0:
         return col
     chunks = chunk_docs()

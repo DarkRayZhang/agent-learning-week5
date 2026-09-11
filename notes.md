@@ -182,13 +182,59 @@
 - **Small-to-Big / Parent Chunk**：小 chunk 检索（准），返回时给 LLM 它所属的大 chunk（上下文足）。解决 chunk 切小了准但信息不够、切大了够但不准的两难。
 - **只存指针不存全文**：Chroma 只存 id + 向量 + 指针，原文放 MySQL/S3。适合省向量库空间或原文需频繁更新的场景。
 
-### 重启后数据还在吗（persist 验证）
+### 重启后数据还在吗（persist 验证）✅ 已实测（09-11 补做）
 
-→ **待明天动手验证**（今晚太困没跑）：
-1. `python retrieval_app.py` 生成文档 + 入库
-2. `ls ./chroma_db/` 看目录结构
-3. 关掉进程，重新跑一次（不重新入库，直接查询）
-4. 结果一致 → 持久化通过
+**验证方式**：`persist_check.py`——用**两个不同进程**模拟真实「重启」（比在一个进程里读写更有说服力）：
+```bash
+python persist_check.py reset      # 清场（删掉 chroma_db）
+python persist_check.py phase1     # 进程 A：建集合 → 插入 5 条（带 metadata）→ 查询
+python persist_check.py phase2     # 进程 B：只读重开 → 验证数据还在 → 再查询
+```
+
+**实测结果**：
+
+| 项 | 结果 |
+|---|---|
+| 环境 | chromadb **1.5.9** / text-embedding-v4 / 维度 **1024** |
+| 进程 A | 初始 count = **0** → 写入后 count = **5** |
+| 进程 B（新进程） | count = **5** → **✅ 持久化通过**（进程退出，数据没丢） |
+| 距离度量 | `hnsw:space = cosine`（建库时显式指定） |
+| 查询 1 | `我想买点牛奶和鸡蛋` → **0.0990** `牛奶和鸡蛋要买`（次位 0.6095 → 区分度很大） |
+| 查询 2 | `部署的时候要注意什么` → **0.3837** `docker 部署要加健康检查` |
+
+**磁盘结构（推演 → 实测确认，一模一样）**：
+```
+chroma_db/
+├── chroma.sqlite3                        (208,896 B)
+└── 712e565b-16b8-4745-8256-ce1981cbe87b/
+    ├── data_level0.bin                   (423,600 B) ← HNSW 索引（向量 + 图结构）
+    ├── header.bin                        (100 B)
+    ├── length.bin                        (400 B)
+    └── link_lists.bin                    (0 B)
+```
+
+**结论（周三自检的答案）**：
+1. `PersistentClient(path=...)` **每次写自动落盘**，进程退出再开数据还在——这就是 W4 跨轮记忆 `SqliteSaver` 的同款心智：**状态必须落到进程之外**，进程内存靠不住。
+2. **验证持久化必须用 `get_collection` 而不是 `get_or_create_collection`**——前者拿不到就报错（真检验），后者拿不到会帮你新建一个空库（假通过）。这是本次实测最实用的一条。
+
+**⚠️ 实测顺带发现脚手架一个坑（已修）**：
+`retrieval_app.py` 原本写 `get_or_create_collection(COLLECTION)` **没指定距离度量** → Chroma 默认 **l2**（实测 `col.configuration = {'hnsw': {'space': 'l2', 'ef_construction': 100, 'ef_search': 100, 'max_neighbors': 16, ...}}`），与笔记「本周用余弦」矛盾。
+→ 已改为显式 `metadata={"hnsw:space": "cosine"}`。
+→ **通用教训**：space 是 **collection 的元数据、建库时绑死**，事后改不了；一个 collection 里的向量必须同模型、同 space。
+
+**metadata 过滤现场验证（顺手把自检答了）**：
+
+| 查询 | 结果 |
+|---|---|
+| 不带 where | 5 条（按相似度） |
+| `where={'kind':'note'}` | 只剩 2 条 `coding.md` / `travel.md` ✅ 过滤生效 |
+| `where={'source':'shopping.md'}` | 只剩 1 条 ✅ |
+| `where={'kind':'not_exist'}` | `documents=[]` ✅ **诚实返回空，不硬凑** |
+
+→ 这是 metadata 用途①（**过滤**）的现场证据，也**提前验证了周末验收标准 3**（无匹配诚实返回）。
+
+**另一个观察（容易踩）**：不指定 `embedding_function` 时，Chroma 会挂一个 `DefaultEmbeddingFunction`（本地 all-MiniLM-L6-v2）。
+本流程全程传 `embeddings=` / `query_embeddings=`，所以没触发；但**若哪天只传 `query_texts=`，它会去下载本地模型**，且维度 384 ≠ 库里的 1024，直接报错。**结论：显式传向量，别依赖默认 EF。**
 
 ### 补充：Chroma 持久化目录里存了什么（Q5）
 
