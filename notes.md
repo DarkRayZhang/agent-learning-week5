@@ -117,6 +117,9 @@
 - Qdrant 有 payload index 支持 **pre-filter**（先按条件圈定候选集再 ANN）。
 - **Chroma 缓解办法**：k 取大一点（要 5 条就先取 50 条再过滤），留过滤损耗余量。
 
+> 📎 **metadata 设计延伸**（09-11 晚讨论整理）→ `metadata-design.md`：四元组结构 / 两层同名 metadata / metadata ≠ 表字段（缺 DDL 兜底）/ 字段由 query pattern 反推 / 决策可逆性分层 / 成本不对称原则 / 「检索契约」三条款 / `build_metadata()` 模板。
+> （⚠️ 该文与本节同为 AI 草稿，按 §5.6 需 2 天内改成自己版本）
+
 ### 【亲手画】文本 → 切块 → embedding → 入库 → 查询 完整流程
 
 **⚠️ AI 草稿版，明天自己重画一遍**（对照 quiz Q4 补漏 1 的标准流程全景）：
