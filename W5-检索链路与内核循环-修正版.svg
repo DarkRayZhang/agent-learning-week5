@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 860" width="100%" role="img" style="font-family:system-ui,-apple-system,'Segoe UI',sans-serif;max-width:680px;background:#ffffff">
+  <title>W5 修正版：检索链路与内核循环（含周次归属）</title>
+  <desc>上半部分为六环内核循环 L1 到 L6，标注 W4 遗产、W5 新增、W6 待做与 W7 待插 rerank 的位置；下半部分为 W5 检索链路的内部结构，分离线入库与在线查询两阶段。</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <text x="42" y="30" font-size="14" font-weight="500" fill="#2C2C2A" dominant-baseline="central">上半：内核循环 + 周次归属</text>
+
+  <rect x="42" y="52" width="12" height="12" rx="3" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text x="60" y="58" font-size="11" fill="#5F5E5A" dominant-baseline="central">已建成（W1–W4）</text>
+  <rect x="180" y="52" width="12" height="12" rx="3" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+  <text x="198" y="58" font-size="11" fill="#5F5E5A" dominant-baseline="central">W5 本周新增</text>
+  <rect x="300" y="52" width="12" height="12" rx="3" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+  <text x="318" y="58" font-size="11" fill="#5F5E5A" dominant-baseline="central">旧引擎，已被替换</text>
+
+  <circle cx="48" cy="120" r="4" fill="#5F5E5A"/>
+  <rect x="66" y="98" width="124" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text x="128" y="120" font-size="13" font-weight="500" fill="#042C53" text-anchor="middle" dominant-baseline="central">L1 组装上下文</text>
+  <rect x="194" y="90" width="30" height="18" rx="4" fill="#FFFFFF" stroke="#854F0B" stroke-width="0.5"/>
+  <text x="209" y="99" font-size="11" fill="#854F0B" text-anchor="middle" dominant-baseline="central">W6</text>
+
+  <rect x="250" y="98" width="110" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text x="305" y="120" font-size="13" font-weight="500" fill="#042C53" text-anchor="middle" dominant-baseline="central">L2 LLM 决策</text>
+  <rect x="420" y="98" width="110" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text x="475" y="120" font-size="13" font-weight="500" fill="#042C53" text-anchor="middle" dominant-baseline="central">L3 终止判断</text>
+  <circle cx="590" cy="120" r="30" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text x="590" y="120" font-size="12" fill="#042C53" text-anchor="middle" dominant-baseline="central">返回答案</text>
+
+  <line x1="190" y1="120" x2="244" y2="120" stroke="#888780" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="360" y1="120" x2="414" y2="120" stroke="#888780" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="530" y1="120" x2="554" y2="120" stroke="#888780" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="542" y="110" font-size="11" fill="#5F5E5A" text-anchor="middle">是</text>
+
+  <line x1="475" y1="142" x2="475" y2="192" stroke="#888780" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="484" y="167" font-size="11" fill="#5F5E5A">否</text>
+  <rect x="420" y="198" width="110" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text x="475" y="220" font-size="12" fill="#042C53" text-anchor="middle" dominant-baseline="central">L4 执行工具调用</text>
+
+  <polyline points="475,242 475,268 240,268 240,288" fill="none" stroke="#888780" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="475" y1="242" x2="475" y2="288" stroke="#888780" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <rect x="170" y="294" width="140" height="44" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+  <text x="240" y="316" font-size="12" fill="#444441" text-anchor="middle" dominant-baseline="central">search_kb（词法）</text>
+  <rect x="314" y="286" width="30" height="18" rx="4" fill="#FFFFFF" stroke="#5F5E5A" stroke-width="0.5"/>
+  <text x="329" y="295" font-size="11" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">W4</text>
+
+  <rect x="400" y="294" width="150" height="44" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+  <text x="475" y="316" font-size="12" fill="#173404" text-anchor="middle" dominant-baseline="central">语义检索（向量）</text>
+  <rect x="556" y="286" width="30" height="18" rx="4" fill="#FFFFFF" stroke="#3B6D11" stroke-width="0.5"/>
+  <text x="571" y="295" font-size="11" fill="#3B6D11" text-anchor="middle" dominant-baseline="central">W5</text>
+  <text x="556" y="326" font-size="11" fill="#534AB7">W7 加 rerank</text>
+
+  <polyline points="240,338 240,364 405,364 405,384" fill="none" stroke="#888780" stroke-width="1" marker-end="url(#arrow)"/>
+  <polyline points="475,338 475,364 405,364" fill="none" stroke="#888780" stroke-width="1"/>
+
+  <rect x="330" y="390" width="150" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text x="405" y="412" font-size="12" fill="#042C53" text-anchor="middle" dominant-baseline="central">L5 返回工具结果</text>
+  <line x1="330" y1="412" x2="216" y2="412" stroke="#888780" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <rect x="60" y="390" width="150" height="44" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text x="135" y="412" font-size="12" fill="#042C53" text-anchor="middle" dominant-baseline="central">L6 状态持久化</text>
+  <rect x="214" y="382" width="30" height="18" rx="4" fill="#FFFFFF" stroke="#5F5E5A" stroke-width="0.5"/>
+  <text x="229" y="391" font-size="11" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">W4</text>
+
+  <polyline points="135,390 135,142" fill="none" stroke="#888780" stroke-width="1" marker-end="url(#arrow)"/>
+  <text x="146" y="184" font-size="11" fill="#5F5E5A">下一轮从 checkpoint 读状态</text>
+
+  <g transform="translate(0,470)">
+    <text x="42" y="30" font-size="14" font-weight="500" fill="#2C2C2A" dominant-baseline="central">下半：W5 检索链路内部</text>
+
+    <text x="42" y="72" font-size="12" font-weight="500" fill="#3B6D11" dominant-baseline="central">① 离线 · 跑一次</text>
+    <rect x="40" y="84" width="100" height="44" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+    <text x="90" y="106" font-size="12" fill="#173404" text-anchor="middle" dominant-baseline="central">知识文档</text>
+    <rect x="200" y="84" width="120" height="44" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+    <text x="260" y="106" font-size="12" fill="#173404" text-anchor="middle" dominant-baseline="central">切块 500 / 50</text>
+    <rect x="380" y="84" width="130" height="44" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+    <text x="445" y="106" font-size="12" fill="#173404" text-anchor="middle" dominant-baseline="central">embedding ①</text>
+    <line x1="140" y1="106" x2="194" y2="106" stroke="#3B6D11" stroke-width="1" marker-end="url(#arrow2)"/>
+    <line x1="320" y1="106" x2="374" y2="106" stroke="#3B6D11" stroke-width="1" marker-end="url(#arrow2)"/>
+
+    <line x1="445" y1="128" x2="445" y2="184" stroke="#3B6D11" stroke-width="1" marker-end="url(#arrow2)"/>
+    <text x="454" y="156" font-size="11" fill="#3B6D11" dominant-baseline="central">写入</text>
+    <rect x="380" y="190" width="130" height="56" rx="8" fill="#C0DD97" stroke="#3B6D11" stroke-width="0.5"/>
+    <text x="445" y="210" font-size="12" fill="#173404" text-anchor="middle" dominant-baseline="central">向量库</text>
+    <text x="445" y="228" font-size="11" fill="#27500A" text-anchor="middle" dominant-baseline="central">200 块 · cosine</text>
+
+    <text x="42" y="278" font-size="12" font-weight="500" fill="#3B6D11" dominant-baseline="central">② 在线 · 每次查询</text>
+    <rect x="40" y="290" width="100" height="44" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+    <text x="90" y="312" font-size="12" fill="#173404" text-anchor="middle" dominant-baseline="central">query 文本</text>
+    <rect x="200" y="290" width="130" height="44" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+    <text x="265" y="312" font-size="12" fill="#173404" text-anchor="middle" dominant-baseline="central">embedding ②</text>
+    <line x1="140" y1="312" x2="194" y2="312" stroke="#3B6D11" stroke-width="1" marker-end="url(#arrow2)"/>
+
+    <polyline points="265,334 265,360 445,360 445,252" fill="none" stroke="#3B6D11" stroke-width="1" marker-end="url(#arrow2)"/>
+    <text x="285" y="350" font-size="11" fill="#3B6D11" dominant-baseline="central">query 转向量</text>
+    <text x="454" y="306" font-size="11" fill="#3B6D11" dominant-baseline="central">余弦比对</text>
+
+    <line x1="510" y1="218" x2="596" y2="218" stroke="#3B6D11" stroke-width="1" marker-end="url(#arrow2)"/>
+    <text x="516" y="200" font-size="12" font-weight="500" fill="#3B6D11" dominant-baseline="central">Top-K</text>
+    <text x="516" y="236" font-size="11" fill="#5F5E5A" dominant-baseline="central">接到 L1 拼上下文</text>
+
+    <text x="42" y="398" font-size="11" fill="#5F5E5A" dominant-baseline="central">文档侧 0 次（入库时已算好存进库）｜ 查询侧每次 1 次 → 一次检索共 1 次 embedding 调用</text>
+  </g>
+</svg>
