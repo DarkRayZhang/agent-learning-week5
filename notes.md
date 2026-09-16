@@ -341,7 +341,7 @@ chroma_db/
 （09-11 的 `where={'kind':'not_exist'}` → `documents=[]` 是另一条独立证据：过滤后无结果时不硬凑。）
 - README 一句话卖点：✅ 已改为「**100 篇文档切块检索 + 可溯源 + 诚实拒答**」（09-16）
 - 空白页测验结果（重写 search 核心）：⬜ **待做**
-- 与主线衔接：`docs/sample_retrieval.json` 存了吗（W7 并入主线「备忘录检索」用）？⬜ **待做**
+- 与主线衔接：`docs/sample_retrieval.json` 存了吗（W7 并入主线「备忘录检索」用）？✅ **已生成（09-16）** —— 新增 `export_samples.py`，17 条用例：**判定 16/16、内容 8/11**；详见 `README.md` §测试资产 + `../学习记录-2026-09.md` 09-16 §四.5
 
 ---
 
@@ -616,7 +616,7 @@ Chroma `query()` 返回的 `distances` 是 **cosine distance（越小越像）**
 
 - [ ] **W5 开幕三块内容**（坐标 / 三行接口 / 生产之问）—— 上面 §W5 开幕**仍是空下划线**，按 v3.6 §5.7 **必须自己手写**
 - [ ] W5 空白页测验（关 AI 重写「检索 → 拼上下文 → 生成」核心）
-- [ ] `docs/sample_retrieval.json`（W7 并入主线「备忘录检索」用）
+- [x] ~~`docs/sample_retrieval.json`（W7 并入主线「备忘录检索」用）~~ ✅ 已生成（`export_samples.py`：判定 16/16、内容 8/11）
 
 ---
 
