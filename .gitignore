@@ -10,6 +10,11 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 
-# 数据产物（docs/ 可由 make_docs.py 重新生成，chroma_db/ 可重建，均不入库）
-docs/
+# 数据产物（docs/*.md 可由 make_docs.py 重新生成，chroma_db/ 可重建，均不入库）
+docs/*
 chroma_db/
+
+# 例外：检索样例是「基准资产」而非「可再生产物」—— W7 的 Java 版要拿它做跨实现对照，
+# 重新生成需要 API key + 网络，不是零成本。⚠️ 父目录被**整目录**忽略（`docs/`）时
+# `!` 规则不生效，所以上一行必须写 `docs/*` 而不是 `docs/`。
+!docs/sample_retrieval.json
