@@ -7,9 +7,9 @@ PHASE 2 · 进程 B：模拟重启后重新打开（只读，不重新入库）
   → hnsw:space = cosine
 
 [再查询] query = '部署的时候要注意什么'
-  0.3837 | [coding.md/note] docker 部署要加健康检查
+  0.3838 | [coding.md/note] docker 部署要加健康检查
   0.6489 | [schedule.md/reminder] 提醒我明天9点开会
-  0.6795 | [health.md/habit] 跑步要坚持每周三次
+  0.6794 | [health.md/habit] 跑步要坚持每周三次
 
-[metadata 回显] [{"source": "coding.md", "kind": "note"}, {"kind": "reminder", "source": "schedule.md"}, {"source": "health.md", "kind": "habit"}]
+[metadata 回显] [{"source": "coding.md", "kind": "note"}, {"source": "schedule.md", "kind": "reminder"}, {"kind": "habit", "source": "health.md"}]
 → metadata 三用途现场验证：① 溯源(source) ② 过滤(kind 可 where) ③ 排序加权特征

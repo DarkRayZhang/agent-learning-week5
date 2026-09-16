@@ -5,8 +5,15 @@ Week 5 · 批量 embedding（支持超过 10 条自动切块）
 超了不会帮你切，会直接报错。周末 100 篇文档入库必然踩到。
 
 跑通：python embed_batch.py
+
+【2026-09-15 增强（W5 收口①）】新增 delay / max_retry / verbose 三个可选参数。
+旧调用方式 embed_batch(texts) 行为不变 —— 纯向后兼容扩容，不是重写。
+为什么要加：100 篇切出 200+ 块 = 20+ 次 API 调用，需要限速（delay）
+与失败重试（max_retry），否则中途一个 429/超时整批白跑。
 """
 import os
+import time
+
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -22,21 +29,46 @@ EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-v4")
 BATCH_SIZE = 10
 
 
-def embed_batch(texts, batch_size=BATCH_SIZE):
+def embed_batch(texts, batch_size=BATCH_SIZE, delay=0.0, max_retry=3, verbose=False):
     """把一批文本转成向量，超过 batch_size 自动切块。
 
     Args:
         texts: 文本列表，任意长度
         batch_size: 每批最多几条，默认 10（百炼 v4 上限）
+        delay: 每批之间的间隔秒数（默认 0；批量入库建议 0.1~0.2，防限流）
+        max_retry: 单批失败的重试次数（指数退避 1.5s / 3s / 4.5s）
+        verbose: 是否打印批次进度
     Returns:
         向量列表，**顺序与 texts 严格一致**
     """
     vectors = [None] * len(texts)
-    for start in range(0, len(texts), batch_size):
+    total = (len(texts) + batch_size - 1) // batch_size
+
+    for bi, start in enumerate(range(0, len(texts), batch_size), start=1):
         chunk = texts[start:start + batch_size]
-        resp = client.embeddings.create(model=EMBEDDING_MODEL, input=chunk)
+        resp = None
+        for attempt in range(1, max_retry + 1):
+            try:
+                resp = client.embeddings.create(model=EMBEDDING_MODEL, input=chunk)
+                break
+            except Exception as e:
+                if attempt == max_retry:
+                    raise
+                wait = 1.5 * attempt
+                if verbose:
+                    print(f"    批 {bi}/{total} 第 {attempt} 次失败（{type(e).__name__}），{wait:.1f}s 后重试")
+                time.sleep(wait)
+
+        # ⚠️ 必须用 item.index 回填，不能靠 resp.data 的顺序 —— 用 index 才能保证
+        #    「返回向量 ↔ 输入文本」严格对齐，这是批量接口最容易静默出错的地方。
         for item in resp.data:
             vectors[start + item.index] = item.embedding
+
+        if verbose and (bi % 5 == 0 or bi == total):
+            print(f"    批 {bi}/{total} 完成")
+        if delay and bi < total:
+            time.sleep(delay)
+
     return vectors
 
 
@@ -71,7 +103,7 @@ if __name__ == "__main__":
     ]
 
     print(f"输入 {len(SENTENCES)} 条，BATCH_SIZE={BATCH_SIZE} → 应切成 2 批")
-    vecs = embed_batch(SENTENCES)
+    vecs = embed_batch(SENTENCES, verbose=True)
 
     print(f"返回 {len(vecs)} 个向量，维度 {len(vecs[0])}")
     assert len(vecs) == len(SENTENCES), "数量对不上"

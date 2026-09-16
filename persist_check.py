@@ -138,9 +138,22 @@ if __name__ == "__main__":
     phase = sys.argv[1] if len(sys.argv) > 1 else "phase1"
 
     if phase == "reset":
-        import shutil
-        shutil.rmtree(PERSIST_DIR, ignore_errors=True)
-        print(f"已删除 {os.path.abspath(PERSIST_DIR)}（重跑验证前清场）")
+        # ⚠️ 2026-09-15 修正：原实现是 shutil.rmtree(整个 chroma_db)，
+        #    在 week5_docs（100 篇文档的正式索引，200 块）建好之后，
+        #    这个默认行为会**顺手删掉正式索引** —— 复跑一次验证等于重建一次索引。
+        #    改为：默认只清「本脚本自己的验证 collection」，其他 collection 保留；
+        #    真要连目录一起清，显式加 --hard。
+        if "--hard" in sys.argv:
+            import shutil
+            shutil.rmtree(PERSIST_DIR, ignore_errors=True)
+            print(f"已删除整个 {os.path.abspath(PERSIST_DIR)}（--hard）")
+        else:
+            import chromadb as _c
+            try:
+                _c.PersistentClient(path=PERSIST_DIR).delete_collection(COLLECTION)
+                print(f"已删除 collection「{COLLECTION}」（其他 collection 保留）")
+            except Exception as ex:
+                print(f"collection「{COLLECTION}」不存在，无需清理（{type(ex).__name__}）")
         sys.exit(0)
 
     try:

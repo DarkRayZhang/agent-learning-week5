@@ -1,0 +1,17 @@
+Week 5 · 索引构建报告（W5 收口①）
+============================================
+built_at               = 2026-09-15 21:15:00
+collection             = week5_docs
+hnsw_space             = cosine
+docs                   = 100
+chunks                 = 200
+chunk_size             = 500
+chunk_overlap          = 50
+chunk_len_min          = 87
+chunk_len_avg          = 344
+chunk_len_max          = 500
+chunks_per_doc_avg     = 2.0
+embedding_model        = text-embedding-v4
+embedding_dim          = 1024
+api_calls              = 20
+embed_seconds          = 13.0
