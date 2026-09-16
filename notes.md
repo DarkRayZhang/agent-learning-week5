@@ -485,6 +485,7 @@ Chroma 的取舍是「**简单正确优先**」——用同步写换实现简单
 | 验收 3 · 库外话题诚实拒答 | **2/2**（量子计算 0.2966 / 猫瘟 0.3052，均 < 阈值 0.45） |
 | 新增能力 | `--selftest`（一条命令自动跑完验收 2+3）、`python retrieval_app.py "query"`（单次查询） |
 | 回归 | `persist_check.py` 的 `from retrieval_app import embed, EMBEDDING_MODEL` **未断**（刻意保留原名） |
+| 验收 5 · commit | ✅ `dba6480`（收口①）/ `ddd2ead`（收口②）/ `fc6482b`（persist 时机补记），已 push |
 
 5 种说法实测明细：
 
